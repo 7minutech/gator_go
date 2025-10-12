@@ -106,3 +106,24 @@ func handlerReset(s *state, cmd command) error {
 	fmt.Println("users were successfully reset")
 	return nil
 }
+
+func handlerUsers(s *state, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("error: users expects zero arguments")
+	}
+
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("error: fetching users: %w", err)
+	}
+
+	for _, user := range users {
+		msg := user.Name
+		if user.Name == s.cfg.CurrentUserName {
+			msg += " (current)"
+		}
+		fmt.Println(msg)
+	}
+
+	return nil
+}
