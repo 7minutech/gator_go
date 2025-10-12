@@ -32,8 +32,7 @@ func Read() (Config, error) {
 	}
 	defer configFile.Close()
 	var config Config
-	err = json.NewDecoder(configFile).Decode(&config)
-	if err != nil {
+	if err := json.NewDecoder(configFile).Decode(&config); err != nil {
 		return Config{}, fmt.Errorf("error decoding config file: %w", err)
 	}
 	return config, nil
@@ -57,8 +56,7 @@ func writeConfigFile(config Config) error {
 		return fmt.Errorf("error creating config file: %w", err)
 	}
 	defer configFile.Close()
-	err = json.NewEncoder(configFile).Encode(&config)
-	if err != nil {
+	if err = json.NewEncoder(configFile).Encode(&config); err != nil {
 		return fmt.Errorf("error encoding config file: %w", err)
 	}
 	return nil
