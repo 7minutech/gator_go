@@ -21,7 +21,7 @@ type commands struct {
 }
 
 func (c *commands) run(s *state, cmd command) error {
-	if s.Config == nil {
+	if s.cfg == nil {
 		return fmt.Errorf("error: state for command to run does not exists")
 	}
 	f, ok := c.cmds[cmd.name]
@@ -50,11 +50,11 @@ func handlerLogin(s *state, cmd command) error {
 		return fmt.Errorf("error: fetching %s from users: %w", name, err)
 	}
 
-	if err := s.Config.SetUser(name); err != nil {
+	if err := s.cfg.SetUser(name); err != nil {
 		return fmt.Errorf("error: setting login for user %s: %w", name, err)
 	}
 
-	fmt.Printf("user %s has been set\n", s.Config.CurrentUserName)
+	fmt.Printf("user %s has been set\n", s.cfg.CurrentUserName)
 	return nil
 }
 
@@ -84,7 +84,7 @@ func handlerRegister(s *state, cmd command) error {
 		return fmt.Errorf("error: creating user %s: %w", name, err)
 	}
 
-	if err := s.Config.SetUser(newUser.Name); err != nil {
+	if err := s.cfg.SetUser(newUser.Name); err != nil {
 		return fmt.Errorf("error: registering user %s: %w", name, err)
 	}
 

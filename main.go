@@ -12,8 +12,8 @@ import (
 )
 
 type state struct {
-	db     *database.Queries
-	Config *config.Config
+	db  *database.Queries
+	cfg *config.Config
 }
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	}
 	dbQuries := database.New(db)
 
-	myState := state{Config: &myConfig, db: dbQuries}
+	myState := state{cfg: &myConfig, db: dbQuries}
 
 	cmds := commands{cmds: make(map[string]func(*state, command) error)}
 	cmds.register("login", handlerLogin)
