@@ -127,3 +127,17 @@ func handlerUsers(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerAgg(s *state, cmd command) error {
+	testUrl := "https://www.wagslane.dev/index.xml"
+
+	feed, err := fetchFeed(context.Background(), testUrl)
+	if err != nil {
+		return fmt.Errorf("error: fetching feed: %w", err)
+	}
+
+	decodeEscapedHtml(feed)
+
+	fmt.Printf("%+v\n", feed)
+	return nil
+}
