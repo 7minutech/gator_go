@@ -129,8 +129,12 @@ func handlerUsers(s *state, cmd command) error {
 }
 
 func handlerAgg(s *state, cmd command) error {
-	testUrl := "https://www.wagslane.dev/index.xml"
 
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("error: agg expects a single argument, the url")
+	}
+
+	testUrl := "https://www.wagslane.dev/index.xml"
 	feed, err := fetchFeed(context.Background(), testUrl)
 	if err != nil {
 		return fmt.Errorf("error: fetching feed: %w", err)
@@ -139,5 +143,36 @@ func handlerAgg(s *state, cmd command) error {
 	decodeEscapedHtml(feed)
 
 	fmt.Printf("%+v\n", feed)
+	return nil
+}
+
+func handlerAddFeed(s *state, cmd command) error {
+	if len(cmd.args) != 2 {
+		return fmt.Errorf("error: addfeed expects exactly 2 arguments the name and url")
+	}
+
+	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return fmt.Errorf("error: getting current user for feed creation: %w", err)
+	}
+
+	name := cmd.args[0]
+	url := cmd.args[1]
+	feedParams := database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		Name:      name,
+		Url:       url,
+		UserID:    currentUser.ID,
+	}
+
+	feed, err := s.db.CreateFeed(context.Background(), feedParams)
+	if err != nil {
+		return fmt.Errorf("error: creating %s feed: %w", name, err)
+	}
+
+	fmt.Printf("%+v\n", feed)
+
 	return nil
 }
