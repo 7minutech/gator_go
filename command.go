@@ -176,3 +176,20 @@ func handlerAddFeed(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFeeds(s *state, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("error: feeds expects zero arguments")
+	}
+
+	feeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("error: getting feeds: %w", err)
+	}
+
+	for _, feed := range feeds {
+		fmt.Printf("Feed Name: %s | Feed url: %s | Created by: %s\n", feed.Name, feed.Url, feed.UserName)
+	}
+
+	return nil
+}
