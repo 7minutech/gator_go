@@ -12,7 +12,6 @@ WITH inserted_feed_follow as (
 SELECT inserted_feed_follow.*, users.name, feeds.name
 FROM inserted_feed_follow 
 JOIN users
-ON inserted_feed_follow.user_id = users.id
-FROM inserted_feed_follow 
+ON inserted_feed_follow.user_id = users.id 
 JOIN feeds
 ON inserted_feed_follow.id = feed_id;
