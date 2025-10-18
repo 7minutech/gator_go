@@ -20,10 +20,11 @@ func handlerFollow(s *state, cmd command, currentUser database.User) error {
 		return fmt.Errorf("error: fetching feed while following feed")
 	}
 
+	now := time.Now().UTC()
 	feedFollowArgs := database.CreateFeedFollowParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
+		CreatedAt: now,
+		UpdatedAt: now,
 		UserID:    currentUser.ID,
 		FeedID:    feed.ID,
 	}

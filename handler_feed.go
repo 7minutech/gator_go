@@ -14,12 +14,13 @@ func handlerAddFeed(s *state, cmd command, currentUser database.User) error {
 		return fmt.Errorf("error: addfeed expects exactly 2 arguments the name and url")
 	}
 
+	now := time.Now().UTC()
 	name := cmd.args[0]
 	url := cmd.args[1]
 	feedParams := database.CreateFeedParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
+		CreatedAt: now,
+		UpdatedAt: now,
 		Name:      name,
 		Url:       url,
 		UserID:    currentUser.ID,
@@ -32,8 +33,8 @@ func handlerAddFeed(s *state, cmd command, currentUser database.User) error {
 
 	feedFollowParams := database.CreateFeedFollowParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
+		CreatedAt: now,
+		UpdatedAt: now,
 		UserID:    currentUser.ID,
 		FeedID:    feed.ID,
 	}

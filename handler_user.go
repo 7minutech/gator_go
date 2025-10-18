@@ -49,10 +49,11 @@ func handlerRegister(s *state, cmd command) error {
 		return fmt.Errorf("error: checking if name: %s exists in users: %w", name, err)
 	}
 
+	now := time.Now().UTC()
 	userParams := database.CreateUserParams{
 		ID:        uuid.New(),
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
+		CreatedAt: now,
+		UpdatedAt: now,
 		Name:      name,
 	}
 	newUser, err := s.db.CreateUser(context.Background(), userParams)
