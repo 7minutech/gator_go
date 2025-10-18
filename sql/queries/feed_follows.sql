@@ -16,3 +16,9 @@ JOIN users
 ON inserted_feed_follow.user_id = users.id 
 JOIN feeds
 ON inserted_feed_follow.id = feed_id;
+
+-- name: GetFeedFollowsForUser :many
+SELECT * FROM feed_follows
+JOIN feeds 
+ON feed_follows.feed_id = feeds.id
+WHERE feed_follows.user_id = $1;
