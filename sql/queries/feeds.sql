@@ -23,5 +23,10 @@ WHERE url = $1;
 
 -- name: MarkFeedFetched :exec
 UPDATE feeds 
-SET last_fetched_at = SELECT NOW(), updated_at = SELECT NOW()
+SET last_fetched_at = NOW(), updated_at = NOW()
 WHERE id = $1;
+
+-- name: GetNextFeedFetch :one
+SELECT * FROM feeds
+ORDER BY last_fetched_at ASC NULLS FIRST
+LIMIT 1;
