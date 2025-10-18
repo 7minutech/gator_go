@@ -9,14 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, currentUser database.User) error {
 	if len(cmd.args) != 2 {
 		return fmt.Errorf("error: addfeed expects exactly 2 arguments the name and url")
-	}
-
-	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error: getting current user for feed creation: %w", err)
 	}
 
 	name := cmd.args[0]

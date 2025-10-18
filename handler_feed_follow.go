@@ -9,14 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, currentUser database.User) error {
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("error: follow expects one argument the url")
-	}
-
-	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error: fetching current user while following feed: %w", err)
 	}
 
 	url := cmd.args[0]
@@ -42,14 +37,9 @@ func handlerFollow(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFollowing(s *state, cmd command) error {
+func handlerFollowing(s *state, cmd command, currentUser database.User) error {
 	if len(cmd.args) != 0 {
 		return fmt.Errorf("error: following expects zero arguments")
-	}
-
-	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("error: fetching current user while showing following: %w", err)
 	}
 
 	followings, err := s.db.GetFeedFollowsForUser(context.Background(), currentUser.ID)
