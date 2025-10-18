@@ -210,9 +210,9 @@ func handlerFollow(s *state, cmd command) error {
 		return fmt.Errorf("error: follow expects one argument the url")
 	}
 
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
 	if err != nil {
-		return fmt.Errorf("error: fetching user while following feed: %w", err)
+		return fmt.Errorf("error: fetching current user while following feed: %w", err)
 	}
 
 	url := cmd.args[0]
@@ -225,7 +225,7 @@ func handlerFollow(s *state, cmd command) error {
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
-		UserID:    user.ID,
+		UserID:    currentUser.ID,
 		FeedID:    feed.ID,
 	}
 	feedFollowRow, err := s.db.CreateFeedFollow(context.Background(), feedFollowArgs)
@@ -243,12 +243,12 @@ func handlerFollowing(s *state, cmd command) error {
 		return fmt.Errorf("error: following expects zero arguments")
 	}
 
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	currentUser, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
 	if err != nil {
-		return fmt.Errorf("error: fetching user while showing following: %w", err)
+		return fmt.Errorf("error: fetching current user while showing following: %w", err)
 	}
 
-	followings, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
+	followings, err := s.db.GetFeedFollowsForUser(context.Background(), currentUser.ID)
 	if err != nil {
 		return fmt.Errorf("error: fetching follows for current user: %w", err)
 	}
