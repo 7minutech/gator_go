@@ -246,4 +246,6 @@ func handlerFollowing(s *state, cmd command) error {
 		fmt.Printf("Feed: %s\n", follow.FeedName)
 	}
 
+	return nil
+
 }
