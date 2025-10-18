@@ -193,3 +193,9 @@ func handlerFeeds(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFollow(s *state, cmd command) error {
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("error: follow expects one argument the url")
+	}
+}
