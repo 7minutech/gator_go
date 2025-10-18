@@ -20,3 +20,8 @@ ORDER BY user_name;
 -- name: GetFeedByUrl :one
 SELECT * FROM feeds
 WHERE url = $1;
+
+-- name: MarkFeedFetched :exec
+UPDATE feeds 
+SET last_fetched_at = SELECT NOW(), updated_at = SELECT NOW()
+WHERE id = $1;
