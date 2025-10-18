@@ -226,3 +226,24 @@ func handlerFollow(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerFollowing(s *state, cmd command) error {
+	if len(cmd.args) != 0 {
+		return fmt.Errorf("error: following expects zero arguments")
+	}
+
+	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return fmt.Errorf("error: fetching user while showing following: %w", err)
+	}
+
+	followings, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return fmt.Errorf("error: fetching follows for current user: %w", err)
+	}
+
+	for _, follow := range followings {
+		fmt.Printf("Feed: %s\n", follow.FeedName)
+	}
+
+}
