@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -31,10 +32,10 @@ type CreatePostParams struct {
 	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Title       string
+	Title       sql.NullString
 	Url         string
-	Description string
-	PublishedAt string
+	Description sql.NullString
+	PublishedAt time.Time
 	FeedID      uuid.UUID
 }
 
@@ -65,23 +66,21 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 
 const getPostsForUser = `-- name: GetPostsForUser :many
 SELECT posts.id, posts.created_at, posts.updated_at, posts.title, posts.url, posts.description, posts.published_at, posts.feed_id
-FROM users 
+FROM posts 
 JOIN feed_follows 
-ON users.id = feed_follows.user_id
-JOIN posts 
-ON feed_follows.feed_id = posts.feed_id
-WHERE users.id = $1
-ORDER BY posts.created_at DESC
+ON posts.feed_id = feed_follows.feed_id
+WHERE feed_follows.user_id = $1
+ORDER BY posts.published_at DESC
 LIMIT $2
 `
 
 type GetPostsForUserParams struct {
-	ID    uuid.UUID
-	Limit int32
+	UserID uuid.UUID
+	Limit  int32
 }
 
 func (q *Queries) GetPostsForUser(ctx context.Context, arg GetPostsForUserParams) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, getPostsForUser, arg.ID, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, getPostsForUser, arg.UserID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
