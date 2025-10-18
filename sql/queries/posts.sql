@@ -10,6 +10,7 @@ VALUES(
     $7,
     $8
 )
+ON CONFLICT (url) DO NOTHING
 RETURNING *;
 
 -- name: GetPostsForUser :many

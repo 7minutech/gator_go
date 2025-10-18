@@ -25,6 +25,7 @@ VALUES(
     $7,
     $8
 )
+ON CONFLICT (url) DO NOTHING
 RETURNING id, created_at, updated_at, title, url, description, published_at, feed_id
 `
 
