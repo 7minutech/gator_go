@@ -1,24 +1,30 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"time"
 )
 
 func handlerAgg(s *state, cmd command) error {
 
 	if len(cmd.args) != 1 {
-		return fmt.Errorf("error: agg expects a single argument, the url")
+		return fmt.Errorf("error: agg expects a single argument, the time_between_reqs")
 	}
 
-	testUrl := "https://www.wagslane.dev/index.xml"
-	feed, err := fetchFeed(context.Background(), testUrl)
+	duration, err := time.ParseDuration(cmd.args[0])
 	if err != nil {
-		return fmt.Errorf("error: fetching feed: %w", err)
+		return err
 	}
 
-	decodeEscapedHtml(feed)
+	fmt.Printf("Collecting feeds every %s", cmd.args[0])
 
-	fmt.Printf("%+v\n", feed)
+	ticker := time.NewTicker(duration)
+	for ; ; <-ticker.C {
+		if err := scrapeFeeds(s); err != nil {
+			fmt.Printf("scrape error: %v\n", err)
+			continue
+		}
+	}
+
 	return nil
 }
