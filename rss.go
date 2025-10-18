@@ -2,11 +2,18 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"html"
 	"io"
+	"log"
 	"net/http"
+	"time"
+
+	"github.com/7minutech/gator_go/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -65,6 +72,21 @@ func decodeEscapedHtml(feed *RSSFeed) {
 	}
 }
 
+func parsePublishTime(s string) time.Time {
+	layouts := []string{
+		time.RFC3339,
+		time.RFC1123Z,
+		time.RFC1123,
+		time.RFC822Z,
+	}
+	for _, layout := range layouts {
+		if t, err := time.Parse(layout, s); err == nil {
+			return t.UTC()
+		}
+	}
+	return time.Now().UTC()
+}
+
 func scrapeFeeds(s *state) error {
 	nextFeed, err := s.db.GetNextFeedToFetch(context.Background())
 	if err != nil {
@@ -82,8 +104,32 @@ func scrapeFeeds(s *state) error {
 		return fmt.Errorf("error: fetching RSS feed: %w", err)
 	}
 
+	ctx := context.Background()
+
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Println(item.Title)
+		now := time.Now().UTC()
+
+		title := sql.NullString{String: item.Title, Valid: item.Title != ""}
+		desc := sql.NullString{String: item.Description, Valid: item.Description != ""}
+
+		publishTime := parsePublishTime(item.PubDate)
+		postParams := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   now,
+			UpdatedAt:   now,
+			Title:       title,
+			Url:         item.Link,
+			Description: desc,
+			PublishedAt: publishTime,
+			FeedID:      nextFeed.ID,
+		}
+
+		if _, err := s.db.CreatePost(ctx, postParams); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				continue
+			}
+			log.Printf("error: createing post: %v\n", err)
+		}
 	}
 
 	return nil
