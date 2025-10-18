@@ -64,3 +64,27 @@ func decodeEscapedHtml(feed *RSSFeed) {
 		feed.Channel.Item[i].Description = html.UnescapeString(item.Description)
 	}
 }
+
+func scrapeFeeds(s *state) error {
+	nextFeed, err := s.db.GetNextFeedToFetch(context.Background())
+	if err != nil {
+		return fmt.Errorf("error: getting next feed to fetch: %w", err)
+	}
+
+	if err := s.db.MarkFeedFetched(context.Background(), nextFeed.ID); err != nil {
+		return fmt.Errorf("error: marking next feed as fetched: %w", err)
+	}
+
+	fmt.Printf("Fetching: %s (%s)\n", nextFeed.Name, nextFeed.Url)
+
+	rssFeed, err := fetchFeed(context.Background(), nextFeed.Url)
+	if err != nil {
+		return fmt.Errorf("error: fetching RSS feed: %w", err)
+	}
+
+	for _, item := range rssFeed.Channel.Item {
+		fmt.Println(item.Title)
+	}
+
+	return nil
+}
