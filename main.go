@@ -33,6 +33,7 @@ func main() {
 	myState := state{cfg: &myConfig, db: dbQuries}
 
 	cmds := commands{cmds: make(map[string]func(*state, command) error)}
+	cmds.register("help", handlerHelp)
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
