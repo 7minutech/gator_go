@@ -27,6 +27,29 @@ func plainText(html string) string {
 	return s
 }
 
+// go
+func wrapAt(s string, width int) string {
+	if width <= 0 {
+		return s
+	}
+	var b strings.Builder
+	lineLen := 0
+	for _, r := range s {
+		if r == '\n' {
+			b.WriteRune('\n')
+			lineLen = 0
+			continue
+		}
+		if lineLen >= width {
+			b.WriteRune('\n')
+			lineLen = 0
+		}
+		b.WriteRune(r)
+		lineLen++
+	}
+	return b.String()
+}
+
 func handlerBrowse(s *state, cmd command, user database.User) error {
 	if len(cmd.args) > 1 {
 		return fmt.Errorf("error: browse expects only 1 optional arg")
@@ -54,7 +77,7 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 		title := (post.Title.String)
 		url := post.Url
 		desc := html.UnescapeString(plainText(post.Description.String))
-		fmt.Printf("%s (%s)\n\tDesc: %s\n\n", title, url, desc)
+		fmt.Printf("%s\n%s\n\n%s\n\n", title, url, wrapAt(desc, 100))
 	}
 
 	return nil
