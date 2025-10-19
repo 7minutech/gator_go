@@ -16,7 +16,7 @@ func handlerAgg(s *state, cmd command) error {
 		return err
 	}
 
-	fmt.Printf("Collecting feeds every %s", cmd.args[0])
+	fmt.Printf("Collecting feeds every %s\n", cmd.args[0])
 
 	ticker := time.NewTicker(duration)
 	for ; ; <-ticker.C {
