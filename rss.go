@@ -96,13 +96,14 @@ func scrapeFeeds(s *state) error {
 	if err := s.db.MarkFeedFetched(context.Background(), nextFeed.ID); err != nil {
 		return fmt.Errorf("error: marking next feed as fetched: %w", err)
 	}
-
 	fmt.Printf("Fetching: %s (%s)\n", nextFeed.Name, nextFeed.Url)
 
 	rssFeed, err := fetchFeed(context.Background(), nextFeed.Url)
 	if err != nil {
 		return fmt.Errorf("error: fetching RSS feed: %w", err)
 	}
+
+	decodeEscapedHtml(rssFeed)
 
 	ctx := context.Background()
 
