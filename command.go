@@ -14,12 +14,13 @@ type commands struct {
 }
 
 var cmdDescriptions = map[string]string{
-	"help":      "\n\tUsage: help\n\tDescription: shows list of commands and their descriptions",
-	"login":     "\n\tUsage: login <username>\n\tDescription: switch the current user",
-	"register":  "\n\tUsage: register <username>\n\tDescription: create a new user and login as that user",
-	"reset":     "\n\tUsage: reset\n\tDescription: removes all records from all tables",
-	"users":     "\n\tUsage: users\n\tDescription: displays all registered users and current user",
-	"agg":       "\n\tUsage: agg <duration string>\n\tDescription: aggregate feeds continously and insert newly created posts\n\tmeant to run in a seperate shell",
+	"help":     "\n\tUsage: help\n\tDescription: shows list of commands and their descriptions",
+	"login":    "\n\tUsage: login <username>\n\tDescription: switch the current user",
+	"register": "\n\tUsage: register <username>\n\tDescription: create a new user and login as that user",
+	"reset":    "\n\tUsage: reset\n\tDescription: removes all records from all tables",
+	"users":    "\n\tUsage: users\n\tDescription: displays all registered users and current user",
+	"agg": "\n\tUsage: agg <duration string>\n\tDescription: aggregate feeds continously and inserts newly created posts." +
+		"\n\t<interval> is a duration string like 1s, 10m, or 1h.\n\tMeant to run in a seperate shell",
 	"addfeed":   "\n\tUsage: addfeed <name> <url>\n\tDescription: creates a new feed",
 	"follow":    "\n\tUsage: follow <feed url>\n\tDescription: current user follows specified feed",
 	"following": "\n\tUsage: following\n\tDescription: shows all feeds followed by current user",
