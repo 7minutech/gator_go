@@ -3,10 +3,29 @@ package main
 import (
 	"context"
 	"fmt"
+	"html"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/7minutech/gator_go/internal/database"
 )
+
+var (
+	brRe   = regexp.MustCompile(`(?i)<\s*br\s*/?>`)
+	pOpen  = regexp.MustCompile(`(?i)<\s*p[^>]*>`)
+	pClose = regexp.MustCompile(`(?i)</\s*p\s*>`)
+	tagRe  = regexp.MustCompile(`<[^>]+>`)
+)
+
+func plainText(html string) string {
+	s := brRe.ReplaceAllString(html, "\n")
+	s = pOpen.ReplaceAllString(s, "\n")
+	s = pClose.ReplaceAllString(s, "\n")
+	s = tagRe.ReplaceAllString(s, "")
+	s = strings.TrimSpace(s)
+	return s
+}
 
 func handlerBrowse(s *state, cmd command, user database.User) error {
 	if len(cmd.args) > 1 {
@@ -32,7 +51,10 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 	}
 
 	for _, post := range posts {
-		fmt.Printf("%s (%s)\n\tDesc: %s\n\n", post.Title.String, post.Description.String, post.Url)
+		title := (post.Title.String)
+		url := post.Url
+		desc := html.UnescapeString(plainText(post.Description.String))
+		fmt.Printf("%s (%s)\n\tDesc: %s\n\n", title, url, desc)
 	}
 
 	return nil
