@@ -87,7 +87,7 @@ func (q *Queries) DeleteFeedFollow(ctx context.Context, arg DeleteFeedFollowPara
 }
 
 const getFeedFollowsForUser = `-- name: GetFeedFollowsForUser :many
-SELECT feed_follows.id, feed_follows.created_at, feed_follows.updated_at, feed_follows.user_id, feed_follows.feed_id, feeds.name as feed_name FROM feed_follows
+SELECT feed_follows.id, feed_follows.created_at, feed_follows.updated_at, feed_follows.user_id, feed_follows.feed_id, feeds.name as feed_name, feeds.url as feed_url FROM feed_follows
 JOIN feeds 
 ON feed_follows.feed_id = feeds.id
 WHERE feed_follows.user_id = $1
@@ -100,6 +100,7 @@ type GetFeedFollowsForUserRow struct {
 	UserID    uuid.UUID
 	FeedID    uuid.UUID
 	FeedName  string
+	FeedUrl   string
 }
 
 func (q *Queries) GetFeedFollowsForUser(ctx context.Context, userID uuid.UUID) ([]GetFeedFollowsForUserRow, error) {
@@ -118,6 +119,7 @@ func (q *Queries) GetFeedFollowsForUser(ctx context.Context, userID uuid.UUID) (
 			&i.UserID,
 			&i.FeedID,
 			&i.FeedName,
+			&i.FeedUrl,
 		); err != nil {
 			return nil, err
 		}

@@ -49,7 +49,7 @@ func handlerFollowing(s *state, cmd command, currentUser database.User) error {
 	}
 
 	for _, follow := range followings {
-		fmt.Printf("Feed: %s\n", follow.FeedName)
+		fmt.Printf("Feed: %s (%s)\n", follow.FeedName, follow.FeedUrl)
 	}
 
 	return nil
